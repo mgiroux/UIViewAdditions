@@ -30,5 +30,10 @@
 - (instancetype)initWithParent:(UIView *)parent;
 + (instancetype)viewWithParent:(UIView *)parent;
 
+/* Find subview class */
+- (NSArray *)findSubviewsOfClass:(Class)class;
+
+/* Screenshot the view */
+- (UIImage *)screenshot;
 
 @end

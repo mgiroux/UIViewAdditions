@@ -80,4 +80,41 @@
     return [[self alloc] initWithParent:parent];
 }
 
+- (NSArray *)findSubviewsOfClass:(Class)class
+{
+    NSMutableArray *list = @{}.mutableCopy;
+    
+    for (id subView in self.subviews) {
+        if ([subView isKindOfClass:class]) {
+            [list addObject:subView];
+        }
+    }
+    
+    return list;
+}
+
+- (UIImage *)screenshot
+{
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, [UIScreen mainScreen].scale);
+    
+    if ([self respondsToSelector:@selector(drawViewHierarchyInRect:afterScreenUpdates:)]) {
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:
+                                    [self methodSignatureForSelector:
+                                     @selector(drawViewHierarchyInRect:afterScreenUpdates:)]];
+        [invocation setTarget:self];
+        [invocation setSelector:@selector(drawViewHierarchyInRect:afterScreenUpdates:)];
+        CGRect arg2 = self.bounds;
+        BOOL arg3 = YES;
+        [invocation setArgument:&arg2 atIndex:2];
+        [invocation setArgument:&arg3 atIndex:3];
+        [invocation invoke];
+    } else {
+        [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+    }
+    
+    UIImage *screenshot = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return screenshot;
+}
+
 @end
